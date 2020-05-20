@@ -30,7 +30,7 @@ app.use('/', auth);
 app.use('/post', posts);
 
 app.get('/', (req, res) => {
-    res.send(`Please... ${process.env.PORT} ${process.env.MONGO_URI}`)
+    res.send(`InJaEE's PlayMLB API Server`)
 })
 
 setInterval(() => {
@@ -40,6 +40,5 @@ setInterval(() => {
 app.listen(app.get('port'), () => {
     console.log(`${chalk.blue
         .bgHex('000000')
-        .bold(`http://127.0.0.1:${app.get('port')}
-        `)}`);
+        .bold(`Port number is ${app.get('port')}`)}`);
 });
