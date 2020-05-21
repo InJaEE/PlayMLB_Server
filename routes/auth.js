@@ -69,8 +69,6 @@ router.post('/signup', (req, res) => {
 
 router.post('/kakao', (req, res) => {
     const { username, nickname, snsId } = req.body;
-    console.log("@@#", username ,nickname, snsId);
-    
 
     UserModel.findOne({username, snsId, provider: 'kakao'})
     .then(user => {

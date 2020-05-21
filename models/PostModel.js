@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-
-console.log(mongoose.Schema.Types.ObjectId);
+const autoIncrement = require('mongoose-auto-increment');
 
 const post = new mongoose.Schema({
+    number: Number,
     title: {
         type: String,
         required: true,
@@ -10,6 +10,11 @@ const post = new mongoose.Schema({
     },
     contents: {
         type: String,
+        required: true,
+    },
+    writer: {
+        type: String,
+        required: true,
     },
     views: {
         type: Number,
@@ -22,6 +27,10 @@ const post = new mongoose.Schema({
             default: Date.now,
         }
     }],
+    recommend: {
+        type: Number,
+        default: 0,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -29,6 +38,13 @@ const post = new mongoose.Schema({
     updatedAt: Date,
 });
 
+post.plugin(autoIncrement.plugin, {
+    model: 'post',
+    field: 'number',
+    startAt: 1,
+    increment: 1,
+})
+
 const postModel = mongoose.model('post', post);
 
-export default postModel;
+module.exports = postModel;

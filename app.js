@@ -4,11 +4,10 @@ const cors = require('cors');
 const chalk = require('chalk');
 const morgan = require('morgan');
 const http = require('http');
+require('dotenv').config();
 
 const mongoose = require('mongoose');
-
-const posts = require('./routes/posts');
-const auth = require('./routes/auth');
+const autoIncrement = require('mongoose-auto-increment');
 
 mongoose.connect(
     process.env.MONGO_URI,
@@ -16,9 +15,16 @@ mongoose.connect(
         useNewUrlParser: true,
         useUnifiedTopology : true,
     })
-    .then(() => console.log('DataBase Connected!!!'))
+    .then(() => {
+        console.log('DataBase Connected!!!')
+    })
     .catch(err => console.error(err));
+const db = mongoose.connection;
+autoIncrement.initialize(db);
 
+const posts = require('./routes/posts');
+const auth = require('./routes/auth');
+    
 app.set('port', process.env.PORT || 3000);
 
 app.use(cors());
