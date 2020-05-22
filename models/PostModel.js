@@ -36,6 +36,9 @@ const post = new mongoose.Schema({
         default: Date.now,
     },
     updatedAt: Date,
+    createdBy: {
+        
+    }
 });
 
 post.plugin(autoIncrement.plugin, {
