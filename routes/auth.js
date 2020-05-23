@@ -4,11 +4,10 @@ const UserModel = require('../models/UserModel');
 const { newToken } = require('../util/token');
 
 router.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    console.log("###", req.body);
+    const { userId, password } = req.body;
     
     UserModel.findOne({
-        username, provider:'local',
+        userId, provider:'local',
     })
     .then(user => {
         if(!user){
@@ -21,7 +20,7 @@ router.post('/login', (req, res) => {
             if(result){
                 const token = newToken(user);
                 const loggedInUser = {
-                    username: user.username,
+                    userId: user.userId,
                     nickname: user.nickname,
                 };
                 res.status(200).json({
@@ -43,14 +42,15 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/signup', (req, res) => {
-    const { username, password, nickname } = req.body;
+    const { userId, password, nickname } = req.body;
+    
     bcrypt.hash(password, 10, (err, hashedPwd) => {
         if(err){
             console.error(err);
             return res.status(500).json({ err });
         } else{
             const newUser = new UserModel({
-                username,
+                userId,
                 password: hashedPwd,
                 nickname,
             });
@@ -68,13 +68,14 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/kakao', (req, res) => {
-    const { username, nickname, snsId } = req.body;
-
-    UserModel.findOne({username, snsId, provider: 'kakao'})
+    const { userId, nickname, snsId } = req.body;
+    console.log("###", req.body);
+    
+    UserModel.findOne({ userId, snsId, provider: 'kakao' })
     .then(user => {
         if(!user){
             const newUser = new UserModel({
-                username,
+                userId,
                 password: 'password',
                 nickname,
                 provider: 'kakao',
@@ -92,7 +93,7 @@ router.post('/kakao', (req, res) => {
         }
         const token = newToken(user);
         const loggedInUser = {
-            username: user.username,
+            userId: user.userId,
             nickname: user.nickname,
         }
         res.status(200).json({

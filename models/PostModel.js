@@ -7,38 +7,44 @@ const post = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
+        maxlength: 30,
     },
     contents: {
         type: String,
         required: true,
-    },
-    writer: {
-        type: String,
-        required: true,
+        maxlength: 300,
     },
     views: {
         type: Number,
         default: 0,
     },
     comments: [{
-        contents: String,
+        contents: {
+            type: String,
+            maxlength: 60,
+        },
+        createdBy: {
+            type: String
+        },
         createdAt: {
             type: Date,
             default: Date.now,
         }
     }],
-    recommend: {
-        type: Number,
-        default: 0,
+    recommend: [{
+        recommendBy: {
+            type: String,
+        },
+    }],
+    createdBy: {
+        type: String,
+        required: true,
     },
     createdAt: {
         type: Date,
         default: Date.now,
     },
     updatedAt: Date,
-    createdBy: {
-        
-    }
 });
 
 post.plugin(autoIncrement.plugin, {

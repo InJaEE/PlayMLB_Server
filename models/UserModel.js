@@ -1,20 +1,22 @@
 const mongoose = require('mongoose');
 
 const user = new mongoose.Schema({
-    username: {
+    // 로그인 아이디
+    userId: {
         type: String,
         required: true,
         trim: true,
         unique: true,
     },
-    password: {
-        type: String,
-        required: true,
-    },
+    // 닉네임
     nickname: {
         type: String,
         required: true,
         unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
     },
     provider: {
         type: String,

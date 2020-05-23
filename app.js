@@ -24,6 +24,7 @@ autoIncrement.initialize(db);
 
 const posts = require('./routes/posts');
 const auth = require('./routes/auth');
+const postAddon = require('./routes/postAddon');
     
 app.set('port', process.env.PORT || 3000);
 
@@ -34,6 +35,7 @@ app.use(morgan('dev'));
 
 app.use('/', auth);
 app.use('/post', posts);
+app.use('/postAddon', postAddon);
 
 app.get('/', (req, res) => {
     res.send(`InJaEE's PlayMLB API Server`)

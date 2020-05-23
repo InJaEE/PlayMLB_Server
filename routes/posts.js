@@ -17,11 +17,11 @@ router.get('/', (req, res) => {
 
 // TODO: 포스트 생성
 router.post('/', (req, res) => {
-    const { title, contents, writer } = req.body;
+    const { title, contents, createdBy } = req.body;
     const newPost = new PostModel({
         title,
         contents,
-        writer,
+        createdBy,
     });
     newPost.save((err, saved) => {
         if(err){
@@ -37,8 +37,13 @@ router.post('/', (req, res) => {
 // TODO: 포스트 1개 조회
 router.get('/:number', async (req, res) => {
     const { number } = req.params;
-    await PostModel.findOne({number})
-    res.status(200).send('SELECT Success');
+    const result = await PostModel.findOne({number});    
+    
+    res.status(200).send({
+        success: true,
+        message: '포스트 조회 성공',
+        post: result,
+    });
     
     
 });
@@ -47,7 +52,9 @@ router.get('/:number', async (req, res) => {
 router.put('/:number', async (req, res) => {
     const { number } = req.params;
     await PostModel.findOneAndUpdate({})
-    res.status(200).send('UPDATE Success');
+    res.status(200).send({
+        success: true,
+    });
 
 
 });
