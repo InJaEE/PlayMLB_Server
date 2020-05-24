@@ -23,9 +23,8 @@ const post = new mongoose.Schema({
             type: String,
             maxlength: 60,
         },
-        createdBy: {
-            type: String
-        },
+        nickname: String,
+        userId: String,
         createdAt: {
             type: Date,
             default: Date.now,

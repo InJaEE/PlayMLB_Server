@@ -26,21 +26,26 @@ router.put('/recommend', async (req, res) => {
     
 });
 
-router.post('/test', async (req, res) => {
-    const test = await PostModel.findOne({number: 13});
-    const re = test.recommend.find(v => {
-        return v.recommendBy = 'in11202@naver.com';
-    });
-    console.log("@@@", re.value);
-    
-    
-    const recommend = {
-        recommendBy: 'bbb@naver.com',
-        value: true,
+// 댓글
+router.post('/comments', async (req, res) => {
+    const { number, contents, userId, nickname  } = req.body;
+    // await PostModel.findOneAndUpdate({number}, 
+    //     {$push: {comments: {contents, commentedBy}}}
+    //     )
+    const comments = {
+        contents,
+        userId,
+        nickname,
     };
-    const data = await PostModel.updateOne({number: 13}, {$push: {recommend}})
-    .lean().exec();
-    res.send(data)
+    // const postData = await PostModel.findOne({number});
+    try {
+        await PostModel.updateOne({ number }, { $push: { comments }})
+        
+    } catch (err) {
+        console.error(err);
+        
+    }
+    res.status(200).send('Success');
 })
 
 router.get('/test', async (req, res) => {
