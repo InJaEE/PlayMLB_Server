@@ -40,11 +40,13 @@ app.use('/postAddon', postAddon);
 app.get('/', (req, res) => {
     res.send(`InJaEE's PlayMLB API Server`)
 })
-/*
-setInterval(() => {
-    http.get('https://playmlb-server.herokuapp.com/');
-}, 900000)
-*/
+
+if(process.env.NODE_ENV === 'production'){
+    setInterval(() => {
+        http.get('https://playmlb-server.herokuapp.com/');
+    }, 900000)
+}
+
 app.listen(app.get('port'), () => {
     console.log(`${chalk.blue
         .bgHex('000000')
