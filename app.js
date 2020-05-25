@@ -27,7 +27,6 @@ const { authenticateUser } = require('./util/token');
 
 const posts = require('./routes/posts');
 const auth = require('./routes/auth');
-const postWithoutAuth = require('./routes/postWithoutAuth');
     
 app.set('port', process.env.PORT || 3000);
 
@@ -38,12 +37,6 @@ app.use(morgan('dev'));
 
 app.use('/', auth);
 app.use('/post', authenticateUser, posts);
-app.use('/postWithoutAuth', postWithoutAuth);
-
-//app.use('/', authenticateUser, auth);
-//app.use('/board', authenticateUser, posts);
-//app.use('/post', authenticateUser, posts);
-
 
 app.get('/', (req, res) => {
     res.send(`InJaEE's PlayMLB API Server`)

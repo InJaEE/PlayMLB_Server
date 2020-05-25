@@ -1,7 +1,31 @@
 const router = require('express').Router();
 const PostModel = require('../models/PostModel');
 
+// TODO: 포스트 목록
+router.get('/', (req, res) => {
+    PostModel.find({ isDeleted: false })
+    .then(posts => {
+        //console.log(posts);
+        res.status(200).json({
+            success: true,
+            posts,
+        });
+    }).catch(err => {
+        console.error(err);
+    })
+});
 
+// TODO: 포스트 1개 조회
+router.get('/:number', async (req, res) => {
+    const { number } = req.params;
+    const result = await PostModel.findOne({ number, isDeleted: false });    
+    
+    res.status(200).send({
+        success: true,
+        message: '포스트 조회 성공',
+        post: result,
+    });    
+});
 
 // TODO: 포스트 생성
 router.post('/', (req, res) => {
@@ -22,8 +46,6 @@ router.post('/', (req, res) => {
     })
 });
 
-
-
 // TODO: 포스트 수정
 router.put('/:number', async (req, res) => {
     const { number } = req.params;
@@ -31,8 +53,6 @@ router.put('/:number', async (req, res) => {
     res.status(200).send({
         success: true,
     });
-
-
 });
 
 // TODO: 포스트 삭제
@@ -44,10 +64,10 @@ router.delete('/:number', async (req, res) => {
 });
 
 // 추천
-router.put('/recommend', async (req, res) => {
+router.put('/:number/recommend', async (req, res) => {
     const { number, userId } = req.body;
-    
     const postData = await PostModel.findOne({ number });
+    
     const findData = postData.recommend.find(v => {
         return v.recommendBy === userId;
     })
@@ -69,7 +89,7 @@ router.put('/recommend', async (req, res) => {
 });
 
 // 댓글
-router.post('/comments', async (req, res) => {
+router.post('/:number/comments', async (req, res) => {
     const { number, contents, userId, nickname  } = req.body;
     // await PostModel.findOneAndUpdate({number}, 
     //     {$push: {comments: {contents, commentedBy}}}

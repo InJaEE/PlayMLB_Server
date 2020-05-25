@@ -25,8 +25,8 @@ const verifyToken = token => {
 };
 
 const authenticateUser = async(req, res, next) => {
-    console.log("##", req.headers);
-    console.log("##", req.method);
+    console.log("@", req.headers.authorization);
+    
     if (req.method == 'GET') {
         next();
         return;
@@ -49,7 +49,6 @@ const authenticateUser = async(req, res, next) => {
     if(!user){
         return res.status(401).json({ message: 'user not found '})
     }
-
     req.user = user;
     next();
 }
