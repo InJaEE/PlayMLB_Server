@@ -44,6 +44,10 @@ const post = new mongoose.Schema({
         default: Date.now,
     },
     updatedAt: Date,
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 post.plugin(autoIncrement.plugin, {

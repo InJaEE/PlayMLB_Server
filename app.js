@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 const chalk = require('chalk');
 const morgan = require('morgan');
-const http = require('http');
+const https = require('https');
 require('dotenv').config();
 
 const mongoose = require('mongoose');
@@ -19,12 +19,15 @@ mongoose.connect(
         console.log('DataBase Connected!!!')
     })
     .catch(err => console.error(err));
+
 const db = mongoose.connection;
 autoIncrement.initialize(db);
 
+const { authenticateUser } = require('./util/token');
+
 const posts = require('./routes/posts');
 const auth = require('./routes/auth');
-const postAddon = require('./routes/postAddon');
+const postWithoutAuth = require('./routes/postWithoutAuth');
     
 app.set('port', process.env.PORT || 3000);
 
@@ -34,8 +37,13 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/', auth);
-app.use('/post', posts);
-app.use('/postAddon', postAddon);
+app.use('/post', authenticateUser, posts);
+app.use('/postWithoutAuth', postWithoutAuth);
+
+//app.use('/', authenticateUser, auth);
+//app.use('/board', authenticateUser, posts);
+//app.use('/post', authenticateUser, posts);
+
 
 app.get('/', (req, res) => {
     res.send(`InJaEE's PlayMLB API Server`)
@@ -43,7 +51,7 @@ app.get('/', (req, res) => {
 
 if(process.env.NODE_ENV === 'production'){
     setInterval(() => {
-        http.get('https://playmlb-server.herokuapp.com/');
+        https.get('https://playmlb-server.herokuapp.com/');
     }, 900000)
 }
 
