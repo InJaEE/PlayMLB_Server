@@ -16,7 +16,7 @@ mongoose.connect(
         useUnifiedTopology : true,
     })
     .then(() => {
-        console.log('DataBase Connected!!!')
+        console.log('DataBase Connected!!!');
     })
     .catch(err => console.error(err));
 

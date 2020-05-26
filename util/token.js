@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const tokenKey = 'SECRET_KEY';
 const UserModel = require('../models/UserModel');
-
+const PostValidate = require('./PostValidate');
 
 const newToken = user => {
     const payload = {
@@ -24,13 +24,17 @@ const verifyToken = token => {
     });
 };
 
+const urlValidate = {
+    "/post": new PostValidate(),
+}
+
 const authenticateUser = async(req, res, next) => {
-    console.log("@", req.headers.authorization);
-    
-    if (req.method == 'GET') {
+    let urlChk = urlValidate[req.baseUrl];
+    if (urlChk.enabled(req, res)){
         next();
         return;
     }
+    
     if(!req.headers.authorization){
         return res.status(401).json({ message: 'token must be included' });
     }
@@ -51,6 +55,8 @@ const authenticateUser = async(req, res, next) => {
     }
     req.user = user;
     next();
+
+
 }
 
 

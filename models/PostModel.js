@@ -21,7 +21,7 @@ const post = new mongoose.Schema({
     comments: [{
         contents: {
             type: String,
-            maxlength: 60,
+            maxlength: 50,
         },
         nickname: String,
         userId: String,
