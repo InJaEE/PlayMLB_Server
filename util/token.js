@@ -5,7 +5,7 @@ const PostValidate = require('./PostValidate');
 
 const newToken = user => {
     const payload = {
-        username: user.username,
+        userId: user.userId,
         _id: user._id,
     };
     return jwt.sign(payload, tokenKey, {
@@ -34,7 +34,6 @@ const authenticateUser = async(req, res, next) => {
         next();
         return;
     }
-    
     if(!req.headers.authorization){
         return res.status(401).json({ message: 'token must be included' });
     }
@@ -53,10 +52,9 @@ const authenticateUser = async(req, res, next) => {
     if(!user){
         return res.status(401).json({ message: 'user not found '})
     }
+    // 라우터에서로 user를 넘겨준다.
     req.user = user;
     next();
-
-
 }
 
 

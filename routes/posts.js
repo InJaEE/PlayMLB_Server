@@ -1,11 +1,10 @@
 const router = require('express').Router();
 const PostModel = require('../models/PostModel');
 
-// TODO: 포스트 목록
+// TODO: 포스트 전체 조회
 router.get('/', (req, res) => {
-    PostModel.find({ isDeleted: false })
+    PostModel.find({ isDeleted: false }).populate('createdBy', 'userId nickname')
     .then(posts => {
-        //console.log(posts);
         res.status(200).json({
             success: true,
             posts,
@@ -17,8 +16,15 @@ router.get('/', (req, res) => {
 
 // TODO: 포스트 1개 조회
 router.get('/:number', async (req, res) => {
+    
     const { number } = req.params;
-    const result = await PostModel.findOne({ number, isDeleted: false });    
+    const result = await PostModel.findOne({ number, isDeleted: false })
+        .populate({ path: 'createdBy', select: 'userId nickname' })
+        .populate({ path: 'comments.createdBy', select: 'nickname'})
+
+    result.comments.pop
+    console.log(result);
+      
     
     res.status(200).send({
         success: true,
@@ -29,11 +35,14 @@ router.get('/:number', async (req, res) => {
 
 // TODO: 포스트 생성
 router.post('/', (req, res) => {
-    const { title, contents, createdBy } = req.body;
+    const { title, contents } = req.body;
+    const user = req.user._id;
+    console.log(user);
+    
     const newPost = new PostModel({
         title,
         contents,
-        createdBy,
+        createdBy: user,
     });
     newPost.save((err, saved) => {
         if(err){
@@ -48,6 +57,7 @@ router.post('/', (req, res) => {
 
 // TODO: 포스트 수정
 router.put('/:number', async (req, res) => {
+    // 글쓴이가 맞는지 확인해야한다.
     const { number } = req.params;
     await PostModel.findOneAndUpdate({})
     res.status(200).send({
@@ -58,12 +68,12 @@ router.put('/:number', async (req, res) => {
 // TODO: 포스트 삭제
 router.delete('/:number', async (req, res) => {
     const { number } = req.params;
-    // await PostModel.remove({number})
+    // 요청 날린 사용자와 글쓴이가 같은지 확인해야한다.
     await PostModel.updateOne({ number }, { isDeleted: true })
     res.status(200).send('Delete Success');
 });
 
-// 추천
+
 router.put('/:number/recommend', async (req, res) => {
     const { number, userId } = req.body;
     const postData = await PostModel.findOne({ number });
@@ -90,22 +100,20 @@ router.put('/:number/recommend', async (req, res) => {
 
 // 댓글
 router.post('/:number/comments', async (req, res) => {
-    const { number, contents, userId, nickname  } = req.body;
+    const { number, contents } = req.body;
     // await PostModel.findOneAndUpdate({number}, 
     //     {$push: {comments: {contents, commentedBy}}}
     //     )
+    const user = req.user;
     const comments = {
         contents,
-        userId,
-        nickname,
+        createdBy: user,
     };
     // const postData = await PostModel.findOne({number});
     try {
         await PostModel.updateOne({ number }, { $push: { comments }})
-        
     } catch (err) {
         console.error(err);
-        
     }
     res.status(200).send('Success');
 })

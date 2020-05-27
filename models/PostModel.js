@@ -12,7 +12,7 @@ const post = new mongoose.Schema({
     contents: {
         type: String,
         required: true,
-        maxlength: 300,
+        maxlength: 1000,
     },
     views: {
         type: Number,
@@ -23,8 +23,10 @@ const post = new mongoose.Schema({
             type: String,
             maxlength: 50,
         },
-        nickname: String,
-        userId: String,
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        },
         createdAt: {
             type: Date,
             default: Date.now,
@@ -36,7 +38,8 @@ const post = new mongoose.Schema({
         },
     }],
     createdBy: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
     },
     createdAt: {

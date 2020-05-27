@@ -73,14 +73,13 @@ router.post('/signup', (req, res) => {
 
 router.post('/kakao', (req, res) => {
     const { userId, nickname, snsId } = req.body;
-    
     UserModel.findOne({ userId, snsId, provider: 'kakao' })
     .then(user => {
         if(!user){
             const newUser = new UserModel({
                 userId,
-                password: 'password',
                 nickname,
+                password: 'password',
                 provider: 'kakao',
                 snsId,
             });
@@ -89,8 +88,15 @@ router.post('/kakao', (req, res) => {
                     console.error(err);
                     res.status(409).send(err);
                 } else{
+                    const token = newToken(saved);
                     console.log(saved);
-                    res.send(saved);
+                    res.json({
+                        success: true,
+                        message: 'Kakao First Login Success',
+                        userId: saved.userId, 
+                        nickname: saved.nickname,
+                        token
+                    });
                 }
             })
         }
