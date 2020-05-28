@@ -7,9 +7,12 @@ router.post('/login', (req, res) => {
     const { userId, password } = req.body;
     
     UserModel.findOne({
-        userId, provider:'local',
+        userId, provider: 'local',
     })
+    //.select('-password').lean().exec()
     .then(user => {
+        console.log(user);
+        
         if(!user){
             res.status(401).send("존재하지 않는 아이디입니다.");
         }

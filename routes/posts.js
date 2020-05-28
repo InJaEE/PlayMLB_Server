@@ -10,6 +10,7 @@ router.get('/', (req, res) => {
             posts,
         });
     }).catch(err => {
+        res.status(500).send('Error!!!');
         console.error(err);
     })
 });
@@ -22,10 +23,11 @@ router.get('/:number', async (req, res) => {
         .populate({ path: 'createdBy', select: 'userId nickname' })
         .populate({ path: 'comments.createdBy', select: 'nickname'})
 
-    result.comments.pop
-    console.log(result);
-      
-    
+    if(!result){
+        res.status(500).send('Error');
+        return;
+    }
+
     res.status(200).send({
         success: true,
         message: '포스트 조회 성공',
@@ -37,7 +39,6 @@ router.get('/:number', async (req, res) => {
 router.post('/', (req, res) => {
     const { title, contents } = req.body;
     const user = req.user._id;
-    console.log(user);
     
     const newPost = new PostModel({
         title,
@@ -49,17 +50,40 @@ router.post('/', (req, res) => {
             console.error(err);
             res.status(409).send(err);
         } else{
-            console.log(saved);
             res.send(saved);
         }
     })
 });
 
+// 포스트 수정하기 위해 조회
+router.put('/:number/edit', async(req, res) => {
+    const post = await PostModel.findOne({ 
+        number: req.params.number, 
+        createdBy: req.user._id,
+    });
+    if(!post){
+        res.status(403).send('Wrong approach');
+        return;
+    }
+    res.status(200).send(post);
+})
+
 // TODO: 포스트 수정
 router.put('/:number', async (req, res) => {
-    // 글쓴이가 맞는지 확인해야한다.
     const { number } = req.params;
-    await PostModel.findOneAndUpdate({})
+    const { title, contents } = req.body;
+    
+    const updatePost = await PostModel.findOneAndUpdate(
+        { number, createdBy: req.user._id },
+        { title, contents, updatedAt: Date.now() },
+        { new: true },
+    )
+    if(!updatePost){
+        res.status(401).send({
+            success: false,
+            message: '업데이트에 실패하였습니다.'
+        })
+    }
     res.status(200).send({
         success: true,
     });
@@ -68,9 +92,13 @@ router.put('/:number', async (req, res) => {
 // TODO: 포스트 삭제
 router.delete('/:number', async (req, res) => {
     const { number } = req.params;
-    // 요청 날린 사용자와 글쓴이가 같은지 확인해야한다.
-    await PostModel.updateOne({ number }, { isDeleted: true })
-    res.status(200).send('Delete Success');
+    try {
+        await PostModel.updateOne({ number }, { isDeleted: true })
+        res.status(200).send('Delete Success');
+    } catch (err) {
+        res.status(500).send('Error');
+        console.error(err);
+    }
 });
 
 
@@ -87,11 +115,11 @@ router.put('/:number/recommend', async (req, res) => {
             recommendBy: userId,
             value: true,
         }
-        await PostModel.updateOne({number}, {$push: {recommend}})
+        await PostModel.updateOne({ number }, { $push: { recommend } })
     } else{
         // 추천 제거
-        await PostModel.updateOne({number}, {$pull: {
-            recommend: {recommendBy: userId}
+        await PostModel.updateOne({ number }, { $pull: {
+            recommend: { recommendBy: userId }
         }})
     }
     res.status(200).send('success');
@@ -101,15 +129,11 @@ router.put('/:number/recommend', async (req, res) => {
 // 댓글
 router.post('/:number/comments', async (req, res) => {
     const { number, contents } = req.body;
-    // await PostModel.findOneAndUpdate({number}, 
-    //     {$push: {comments: {contents, commentedBy}}}
-    //     )
     const user = req.user;
     const comments = {
         contents,
         createdBy: user,
     };
-    // const postData = await PostModel.findOne({number});
     try {
         await PostModel.updateOne({ number }, { $push: { comments }})
     } catch (err) {

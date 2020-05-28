@@ -8,7 +8,6 @@ require('dotenv').config();
 
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
-
 mongoose.connect(
     process.env.MONGO_URI,
     {
@@ -19,7 +18,8 @@ mongoose.connect(
         console.log('DataBase Connected!!!');
     })
     .catch(err => console.error(err));
-
+mongoose.set('useCreateIndex', true);
+    
 const db = mongoose.connection;
 autoIncrement.initialize(db);
 
