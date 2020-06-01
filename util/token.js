@@ -50,7 +50,7 @@ const authenticateUser = async(req, res, next) => {
         .exec()
         
     if(!user){
-        return res.status(401).json({ message: 'user not found '})
+        return res.status(403).json({ message: 'user not found '})
     }
     // 라우터에서로 user를 넘겨준다.
     req.user = user;
