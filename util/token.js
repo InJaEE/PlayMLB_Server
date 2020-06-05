@@ -30,7 +30,7 @@ const urlValidate = {
 
 const authenticateUser = async(req, res, next) => {
     let urlChk = urlValidate[req.baseUrl];
-    if (urlChk.enabled(req, res)){
+    if (urlChk.passAuth(req, res)){
         next();
         return;
     }
