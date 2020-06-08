@@ -7,7 +7,7 @@ const post = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        maxlength: 30,
+        maxlength: 50,
     },
     contents: {
         type: String,

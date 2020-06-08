@@ -1,5 +1,5 @@
 class Validate {
-    enabled(req, res) {
+    passAuth(req, res) {
         if (req.method === 'GET') {
             return true;
         }
