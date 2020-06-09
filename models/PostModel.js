@@ -12,7 +12,7 @@ const post = new mongoose.Schema({
     contents: {
         type: String,
         required: true,
-        maxlength: 3000,
+        maxlength: 3000000,
     },
     views: {
         type: Number,
