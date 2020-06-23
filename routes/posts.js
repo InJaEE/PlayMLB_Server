@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
             posts,
         });
     }).catch(err => {
-        res.status(500).send('Error!!!');
+        res.status(500).send('Lookup post error!');
         console.error(err);
     })
 });
@@ -22,9 +22,9 @@ router.get('/:number', async (req, res) => {
         const result = await PostModel.findOne({ number, isDeleted: false })
         .populate({ path: 'createdBy', select: 'userId nickname' })
         .populate({ path: 'comments.createdBy', select: 'nickname'})
-        
+
         if(!result){
-            res.status(403).send('Error');
+            res.status(403).send('Cannot find post!');
         return;
     }
         res.status(200).send({
@@ -34,7 +34,7 @@ router.get('/:number', async (req, res) => {
         });    
     } catch (err) {
         console.error(err);
-        res.status(500).send('ERROR');
+        res.status(500).send('Lookup one post error!');
     }
 });
 
@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
     newPost.save((err, saved) => {
         if(err){
             console.error(err);
-            res.status(409).send(err);
+            res.status(409).send('Create post error!');
         } else{
             res.send(saved);
         }
@@ -72,7 +72,7 @@ router.put('/:number/edit', async(req, res) => {
         res.status(200).send(post);
     } catch (err) {
         console.error(err);
-        res.status(500).send('ERROR');
+        res.status(500).send('Lookup for edit post error!');
     }
 })
 
@@ -97,7 +97,7 @@ router.put('/:number', async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).send('ERROR');
+        res.status(500).send('Update post error!');
         
     }
 });
@@ -107,9 +107,9 @@ router.delete('/:number', async (req, res) => {
     const { number } = req.params;
     try {
         await PostModel.updateOne({ number }, { isDeleted: true })
-        res.status(200).send('Delete Success');
+        res.status(200).send('Delete post success');
     } catch (err) {
-        res.status(500).send('Error');
+        res.status(500).send('Delete post error!');
         console.error(err);
     }
 });
@@ -137,10 +137,10 @@ router.put('/:number/recommend', async (req, res) => {
                 recommend: { recommendBy: userId }
             }})
         }
-        res.status(200).send('success');
+        res.status(200).send('Successfully pressed recommende button');
     } catch (err) {
         console.error(err);
-        res.status(500).send('ERROR');
+        res.status(500).send('Press recommend button error!');
         
     }
     
@@ -156,10 +156,10 @@ router.post('/:number/comments', async (req, res) => {
     };
     try {
         await PostModel.updateOne({ number }, { $push: { comments }})
-        res.status(200).send('Success');
+        res.status(200).send('Comments completed successfully');
     } catch (err) {
         console.error(err);
-        res.status(500).send('ERROR');
+        res.status(500).send('Create comment error!');
     }
 })
 
