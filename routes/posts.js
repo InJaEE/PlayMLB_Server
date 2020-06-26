@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const PostModel = require('../models/PostModel');
 
-// TODO: 포스트 전체 조회
+// 포스트 전체 조회
 router.get('/', (req, res) => {
     PostModel.find({ isDeleted: false }).populate('createdBy', 'userId nickname')
     .then(posts => {
@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
     })
 });
 
-// TODO: 포스트 1개 조회
+// 포스트 1개 조회
 router.get('/:number', async (req, res) => {
     const { number } = req.params;
     try {
@@ -38,7 +38,7 @@ router.get('/:number', async (req, res) => {
     }
 });
 
-// TODO: 포스트 생성
+// 포스트 생성
 router.post('/', (req, res) => {
     const { title, contents } = req.body;
     const user = req.user._id;
@@ -76,7 +76,7 @@ router.put('/:number/edit', async(req, res) => {
     }
 })
 
-// TODO: 포스트 수정
+// 포스트 수정
 router.put('/:number', async (req, res) => {
     const { number } = req.params;
     const { title, contents } = req.body;
@@ -102,7 +102,7 @@ router.put('/:number', async (req, res) => {
     }
 });
 
-// TODO: 포스트 삭제
+// 포스트 삭제
 router.delete('/:number', async (req, res) => {
     const { number } = req.params;
     try {
@@ -114,7 +114,7 @@ router.delete('/:number', async (req, res) => {
     }
 });
 
-
+// 추천
 router.put('/:number/recommend', async (req, res) => {
     const { number, userId } = req.body;
 
