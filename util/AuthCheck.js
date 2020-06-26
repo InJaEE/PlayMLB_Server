@@ -1,4 +1,4 @@
-class Validate {
+class PassGetRequest {
     passAuth(req, res) {
         if (req.method === 'GET') {
             return true;
@@ -6,4 +6,7 @@ class Validate {
         return false;
     }
 }
-module.exports = Validate;
+
+class PostAuthCheck extends PassGetRequest {}
+
+exports.PostAuthCheck = PostAuthCheck;

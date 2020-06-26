@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const tokenKey = 'SECRET_KEY';
 const UserModel = require('../models/UserModel');
-const PostValidate = require('./PostValidate');
+const AuthCheck = require('./AuthCheck').PostAuthCheck;
 
 const newToken = user => {
     const payload = {
@@ -25,11 +25,11 @@ const verifyToken = token => {
 };
 
 const urlValidate = {
-    "/post": new PostValidate(),
+    "/post": new AuthCheck(),
 }
 
 const authenticateUser = async(req, res, next) => {
-    let urlChk = urlValidate[req.baseUrl];
+    const urlChk = urlValidate[req.baseUrl];
     if (urlChk.passAuth(req, res)){
         next();
         return;
