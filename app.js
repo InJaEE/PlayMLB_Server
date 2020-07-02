@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
 if(process.env.NODE_ENV === 'production'){
     setInterval(() => {
         https.get('https://playmlb-server.herokuapp.com/');
-    }, 900000)
+    }, 1200000)
 }
 
 app.listen(app.get('port'), () => {
